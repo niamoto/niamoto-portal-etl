@@ -1,6 +1,8 @@
 # coding: utf-8
 
-from sqlalchemy import select, cast, String
+from datetime import datetime
+
+from sqlalchemy import select, func, cast, String
 import pandas as pd
 import geopandas as gpd
 
@@ -23,9 +25,10 @@ class NiamotoPortalPlotDataPublisher(BaseDataPublisher):
         return "Publish the plot dataframe formatted for " \
                "the Niamoto portal."
 
-    def _process(self, *args, **kwargs):
+    def _process(self, *args, drop_null_properties=False,
+                 **kwargs):
         with Connector.get_connection() as connection:
-            properties = ['width', 'height']
+            properties = ['width', 'height', 'elevation']
             keys = properties
             props = [meta.plot.c.properties[k].label(k) for k in keys]
             sel = select([

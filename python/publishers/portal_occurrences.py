@@ -30,7 +30,7 @@ class NiamotoPortalOccurrenceDataPublisher(BaseDataPublisher):
         with Connector.get_connection() as connection:
             properties = ['date_observation', 'height', 'stem_nb', 'dbh',
                           'status', 'wood_density', 'bark_thickness',
-                          'mnt', 'rainfall']
+                          'elevation', 'rainfall']
             keys = properties
             props = [meta.occurrence.c.properties[k].label(k) for k in keys]
             sel = select([
@@ -61,4 +61,3 @@ class NiamotoPortalOccurrenceDataPublisher(BaseDataPublisher):
     @classmethod
     def get_publish_formats(cls):
         return [cls.CSV, cls.SQL]
-
