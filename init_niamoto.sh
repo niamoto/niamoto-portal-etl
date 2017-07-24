@@ -32,3 +32,18 @@ niamoto all_rasters_to_plots
 niamoto publish portal_occurrences sql -d niamoto_data_occurrence --schema public --if_exists truncate --truncate_cascade
 niamoto publish portal_plots sql -d niamoto_data_plot --schema public --if_exists truncate --truncate_cascade
 niamoto publish portal_plots_occurrences sql -d niamoto_data_plotoccurrences --schema public --if_exists truncate
+
+# Add provinces and communes vectors
+niamoto add_vector provinces ~/niamoto/vectors/provinces/provinces.shp
+niamoto add_vector communes ~/niamoto/vectors/communes/communes.shp
+
+# Create and populate dimensions
+niamoto create_vector_dimension provinces --populate
+niamoto create_vector_dimension communes --populate
+niamoto create_taxon_dimension --populate
+
+# Create the taxon_observed_occurrences fact table
+niamoto create_fact_table taxon_observed_occurrences -d provinces -d communes -d taxon_dimension -m occurrence_count
+
+# Populate the taxon_observed_occurrences fact table
+niamoto populate_fact_table taxon_observed_occurrences occurrence_fact_table
