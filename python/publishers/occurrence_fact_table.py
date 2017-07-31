@@ -34,7 +34,7 @@ class OccurrenceFactTablePublisher(BaseFactTablePublisher):
                 provinces.id AS provinces_id,
                 taxon.id AS taxon_dimension_id,
                 communes.id AS communes_id,
-                occ_loc.id AS occurrence_location_dimension_id
+                occ_loc.id AS occurrence_location_id
             FROM {niamoto_schema}.{occ_table} AS occ
             LEFT JOIN {dimensions_schema}.{provinces_table} AS provinces
                 ON ST_Intersects(occ.location, provinces.{province_geom})
