@@ -27,12 +27,14 @@ class OccurrenceFactTablePublisher(BaseFactTablePublisher):
         provinces_dim = data_marts_api.get_dimension('provinces')
         communes_dim = data_marts_api.get_dimension('communes')
         taxon_dim = data_marts_api.get_dimension('taxon_dimension')
+        occ_loc_dim = data_marts_api.get_dimension('occurrence_location')
         sql = \
             """
             SELECT COUNT(occ.id) AS occurrence_count,
                 provinces.id AS provinces_id,
                 taxon.id AS taxon_dimension_id,
-                communes.id AS communes_id
+                communes.id AS communes_id,
+                occ_loc.id AS occurrence_location_dimension_id
             FROM {niamoto_schema}.{occ_table} AS occ
             LEFT JOIN {dimensions_schema}.{provinces_table} AS provinces
                 ON ST_Intersects(occ.location, provinces.{province_geom})
@@ -40,7 +42,9 @@ class OccurrenceFactTablePublisher(BaseFactTablePublisher):
                 ON ST_Intersects(occ.location, communes.{communes_geom})
             LEFT JOIN {dimensions_schema}.{taxon_table} AS taxon
                 ON occ.taxon_id = taxon.id
-            GROUP BY taxon.id, provinces.id, communes.id;
+            LEFT JOIN {dimensions_schema}.{occ_loc_table} AS occ_loc
+                ON occ.location = occ_loc.location
+            GROUP BY taxon.id, provinces.id, communes.id, occ_loc.id;
             """.format(**{
                 'niamoto_schema': settings.NIAMOTO_SCHEMA,
                 'occ_table': meta.occurrence,
@@ -50,6 +54,7 @@ class OccurrenceFactTablePublisher(BaseFactTablePublisher):
                 'communes_table': communes_dim.name,
                 'communes_geom': communes_dim.geom_column_name,
                 'taxon_table': taxon_dim.name,
+                'occ_loc_table': occ_loc_dim.name,
             })
         ns_taxon_sql = \
             """
