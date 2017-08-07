@@ -42,9 +42,10 @@ niamoto create_vector_dimension provinces --populate
 niamoto create_vector_dimension communes --populate
 niamoto create_taxon_dimension --populate
 niamoto create_occurrence_location_dimension --populate
-
+niamoto create_raster_dimension rainfall -cv 1000 -cv 3000 -cl "Basse (< 1000 mm/an)" -cl "Moyenne (>= 1000 mm/an et < 3000 mm/an)" -cl "Haute (>= 3000 mm/an)" -vcl "Pluviométrie" -ccl "Classe de pluviométrie" --populate
+niamoto create_raster_dimension elevation -cv 500 -cv 1000 -cl "Basse (< 500 m)" -cl "Moyenne (>= 500 m et < 1000 m)" -cl "Haute (>= 1000 m)" -vcl "Altitude" -ccl "Classe d'altitude" --populate
 # Create the taxon_observed_occurrences fact table
-niamoto create_fact_table taxon_observed_occurrences -d provinces -d communes -d taxon_dimension -d occurrence_location -m occurrence_count
+niamoto create_fact_table taxon_observed_occurrences -d provinces -d communes -d taxon_dimension -d occurrence_location -d rainfall -d elevation -m occurrence_count
 
 # Populate the taxon_observed_occurrences fact table
 niamoto populate_fact_table taxon_observed_occurrences occurrence_fact_table
